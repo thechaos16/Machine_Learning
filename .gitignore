@@ -1,0 +1,6 @@
+# pyc
+*.pyc
+
+# tensorflow from google
+tensorflow/tensorflow/*
+tensorflow/MNIST_data
