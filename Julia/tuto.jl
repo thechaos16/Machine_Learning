@@ -50,9 +50,9 @@ end
 
 minimum = 1.2
 ans = 0
-for i in range(1,1000000)
+for i in range(1,10000)
 	temp = euler(i)
-	if perm(i,temp)==1
+	if perm(string(i),string(temp))==1
 		if float(i)/float(temp)<minimum
 			minimum = float(i)/float(temp)
 			ans = i
