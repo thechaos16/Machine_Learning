@@ -5,3 +5,4 @@ __pycache__
 # tensorflow from google
 tensorflow/tensorflow/*
 tensorflow/MNIST_data
+tensorflow/tensorflow
