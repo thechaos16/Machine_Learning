@@ -9,9 +9,13 @@ class PerformanceAlert():
     def __init__(self, user_id, db_path, domain, opt = {}):
         self.user_id = user_id
         self.db_path = db_path
-        self.domain = domain
+        self.domain = self.__get_domain_knowledge(domain)
         self.opt = opt
-        
+
+    ## set specific domain knowledge
+    def __get_domain_knowledge(self, domain):
+        return        
+    
     ## firstly, figure out how to build database
     def __read_database(self):
         pass
