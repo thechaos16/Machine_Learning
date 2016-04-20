@@ -22,7 +22,6 @@ class FraudDetector():
     ## using abnormal performance alert module
     def abnormaly_detect(self):
         performance_alert = p_alert.PerformanceAlert(self.user_id, self.db_path, self.domain)
-        
 
 
 if __name__ == '__main__':
