@@ -129,4 +129,3 @@ def difference_by_gradient(data, opt={}):
         if gradient_signal[i]>=thr:
             result_idx.append(i)
     return result_idx   
-
