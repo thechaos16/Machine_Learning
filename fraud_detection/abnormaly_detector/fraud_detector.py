@@ -19,9 +19,13 @@ class FraudDetector():
         self.db_path = db_path
         self.domain = domain
         
-    ## using abnormal performance alert module
+    # using abnormal performance alert module
     def abnormaly_detect(self):
         performance_alert = p_alert.PerformanceAlert(self.user_id, self.db_path, self.domain)
+        
+    # using deep learning?
+    def fraud_detection_by_deep_learning(self):
+        pass
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ Created on Tue Mar 29 16:13:46 2016
 import sys
 import os
 import pandas as pd
+import numpy as np
 try:
     import statistical_difference as sd
 except ImportError:
@@ -15,7 +16,7 @@ except ImportError:
     import statistical_difference as sd
 
 class PerformanceAlert():
-    def __init__(self, user_id, db_path, domain, opt = {}):
+    def __init__(self, user_id, db_path, domain=None, opt = {}):
         self.user_id = user_id
         self.db_path = db_path
         self.db = self.__read_database()
@@ -31,10 +32,14 @@ class PerformanceAlert():
         # initialize DB variable
         db = pd.DataFrame([])
         # extract data from db
+        # for test, make a fake data
+        np.random.seed(42)
+        random_series = pd.Series(np.random.random(size=10000))
+        db['player_id'] = random_series
         return db
     
     ## performance is defined differently along domain
-    def abnormal_peformance_change(self, player_id):
+    def abnormal_performance_change(self, player_id):
         # first draft: one-dimensional performance
         extract_from_db = self.db[player_id]
     
@@ -44,4 +49,5 @@ class PerformanceAlert():
 
 
 if __name__ == '__main__':
-    pass
+    kk = PerformanceAlert('','')
+    kk.abnormal_performance_change('player_id')
