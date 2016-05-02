@@ -15,8 +15,8 @@ except ImportError:
     sys.path.append('../')
     import statistical_difference as sd
 
-class PerformanceAlert():
-    def __init__(self, user_id, db_path, domain=None, opt = {}):
+class PerformanceAlert:
+    def __init__(self, user_id, db_path, domain=None, opt={}):
         self.user_id = user_id
         self.db_path = db_path
         self.db = self.__read_database()
@@ -42,10 +42,6 @@ class PerformanceAlert():
     def abnormal_performance_change(self, player_id):
         # first draft: one-dimensional performance
         extract_from_db = self.db[player_id]
-    
-    ## habit is defined differently along domain
-    def abnormal_habit_change(self):
-        pass
 
 
 if __name__ == '__main__':
