@@ -54,11 +54,6 @@ def manwhitney_test(bins1, counts1, bins2, counts2):
     u_1 = sum_1 - size1 * (size1 + 1) / 2
     u_2 = sum_2 - size2 * (size2 + 1) / 2
     
-    # validity check
-    if size1 * size2 != u_1 + u_2:
-        pass
-        # raise ValueError
-
     # compute p-value for the two-sided test
     sd = np.sqrt(size1 * size2 * (size_total + 1 - tie_corrleation) / 12.0)
     mean = (u_1 + u_2) / 2
@@ -85,21 +80,21 @@ def normality_checker(data):
     
 def difference_by_gradient(data, opt={}):
     ## parameter initialziation
-    try:
+    if 'window' in opt:
         filter_window_size = opt['window']
         if filter_window_size%2==0:
             filter_window_size+=1
-    except KeyError:
+    else:
         filter_window_size = 5            
-    try:
+    if 'kernel' in opt:
         kernel_size = opt['kernel']
         if kernel_size%2==0:
             kernel_size+=1
-    except KeyError:
+    else:
         kernel_size = 9
-    try:
+    if 'threshold' in opt:
         thr = opt['threshold']
-    except KeyError:
+    else:
         thr= np.std(data)*kernel_size/2
 
     ## smoothing by convolution
@@ -108,8 +103,6 @@ def difference_by_gradient(data, opt={}):
     smooth_signal = np.convolve(data, gaussian_filter)
     ## crop smooth_signal
     smooth_signal = smooth_signal[half_width:-half_width]
-    # smooth_signal = smootSignal[half_width:-half_width+1]
-    
     ## kernel with difference signal
     list1 = np.linspace(-1,-(kernel_size-1)/2,(kernel_size-1)/2)
     list2 = np.linspace((kernel_size-1)/2,1,(kernel_size-1)/2)
@@ -129,3 +122,7 @@ def difference_by_gradient(data, opt={}):
         if gradient_signal[i]>=thr:
             result_idx.append(i)
     return result_idx   
+
+
+def outlier_detection_in_time_series(data):
+    pass

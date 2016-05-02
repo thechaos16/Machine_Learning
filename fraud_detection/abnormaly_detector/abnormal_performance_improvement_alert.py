@@ -6,9 +6,9 @@ Created on Tue Mar 29 16:13:46 2016
 """
 
 import sys
-import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 try:
     import statistical_difference as sd
 except ImportError:
@@ -35,6 +35,9 @@ class PerformanceAlert:
         # for test, make a fake data
         np.random.seed(42)
         random_series = pd.Series(np.random.random(size=10000))
+        random_series[:5000]+=3.0
+        # plt.figure()
+        # plt.plot(random_series)
         db['player_id'] = random_series
         return db
     
@@ -42,6 +45,8 @@ class PerformanceAlert:
     def abnormal_performance_change(self, player_id):
         # first draft: one-dimensional performance
         extract_from_db = self.db[player_id]
+        aa = sd.difference_by_gradient(extract_from_db)
+        print(aa)
 
 
 if __name__ == '__main__':
