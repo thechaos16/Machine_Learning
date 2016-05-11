@@ -7,12 +7,11 @@ Created on Tue Mar 29 16:55:55 2016
 
 # for getting html file from url
 from urllib.request import urlopen
-from html.parser import HTMLParser
+from bs4 import BeautifulSoup
 import chardet
 
-class URLHandler(HTMLParser):
+class URLHandler():
     def __init__(self, url):
-        super().__init__()
         self.url = url
         self.urldata = urlopen(url)
     
@@ -23,12 +22,16 @@ class URLHandler(HTMLParser):
         encoding = chardet.detect(data)
         new_url_data = str(data.decode(encoding['encoding']))
         return new_url_data
+    
+    def html_parser(self):
+        url_data = self.url_parser()
+        soup = BeautifulSoup(url_data, 'lxml')
+        valid_list = soup.find_all('table')
+        for elm in valid_list:
+            row_lists = elm.find_all('td')
+            print(row_lists)
+        return valid_list
         
-    # parse only data
-    def handle_data(self, data):
-        if 'Perez' in data:
-            print(data)
-            
     # put refined data into DB
     def store_db(self, db_path):
         pass
@@ -37,5 +40,5 @@ if __name__=='__main__':
     mm = URLHandler('http://espn.go.com/mlb/playbyplay?gameId=350615102')
     #mm = URLHandler('https://docs.python.org/3/library/html.parser.html')
     
-    dd = mm.url_parser()
-    mm.feed(dd)
+    dd = mm.html_parser()
+    #print(dd)
