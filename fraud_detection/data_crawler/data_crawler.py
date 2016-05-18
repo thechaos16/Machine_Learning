@@ -22,7 +22,7 @@ class URLHandler():
             if key == 'url':
                 continue
             self.url += (key + '=' + str(data) + '&')
-        self.urldata = urlopen(url)
+        self.urldata = urlopen(self.url)
     
     # make url as string
     def url_parser(self):
@@ -109,5 +109,5 @@ class URLHandler():
        
 if __name__=='__main__':
     url = 'https://baseballsavant.mlb.com/statcast_leaderboard'
-    mm = URLHandler(url = url, year = 2016, abs = 30, player_type = 'pitcher')
+    mm = URLHandler(url = url, year = 2016, abs = 100, player_type = 'pitcher')
     dd = mm.html_parser('statcast')
