@@ -33,11 +33,7 @@ class URLHandler():
         return new_url_data
     
     def html_parser(self, data_from='espn'):
-        if data_from.lower() == 'espn':
-            return self.data_from_espn()
-        elif data_from.lower() == 'statcast':
-            return self.data_from_baseball_savant()
-        elif data_from.lower() == 'battlenet':
+        if data_from.lower() == 'battlenet':
             return self.data_from_battle_net()
         else:
             raise NotImplementedError()
@@ -46,68 +42,13 @@ class URLHandler():
     def data_from_battle_net(self):
         pass
     
-    # statcast
-    # it returns list of dictionary
-    def data_from_baseball_savant(self):
-        url_data = self.url_parser()
-        soup = BeautifulSoup(url_data, 'lxml')
-        valid_list = soup.find_all('script')
-        for elm in valid_list:
-            if 'leaderboard_data' in str(elm):
-                data = str(elm).split('leaderboard_data = ')[1].split('</script>')[0]
-                data = data.replace('\n','')
-                data = data.replace(';','')
-        return json.loads(data)
-            
-    # espn play-by-play data
-    def data_from_espn(self):
-        url_data = self.url_parser()
-        soup = BeautifulSoup(url_data, 'lxml')
-        valid_list = soup.find_all('table')
-        is_valid = False
-        valid_data = []
-        # table parser
-        for elm in valid_list:
-            row_lists = elm.find_all('tr')
-            one_inning = []
-            for row in row_lists:
-                new_row = list(row.find_all('td'))
-                if len(new_row) != 0:
-                    # this condition is only for espn data, so this file should be moved to MajorLeague project
-                    #if is_valid:
-                    #    valid_data.append(new_row)
-                    if 'Play-By-Play' in str(new_row[0]):
-                        is_valid = True
-                if is_valid:
-                    if len(new_row) != 0:
-                        one_inning.append(new_row)
-                    else:
-                        if len(one_inning) != 0:
-                            valid_data.append(one_inning)
-                            one_inning = []
-        # parser each cell
-        html_return = []
-        for inning in valid_data:
-            inn = []
-            for data in inning:
-                row = []
-                for column in data:
-                    column =  str(column)
-                    parsed_column = column.split('<')
-                    for elm in parsed_column:
-                        if not elm.endswith('>') and elm != '':
-                            real_data = elm.split('>')[1]
-                            break
-                    row.append(real_data)
-                inn.append(row)
-            html_return.append(inn)
-        return html_return
-        
+    # league of legend crawler
+    def data_from_(self):
+        pass
+    
     # put refined data into DB
     def store_db(self, db_path):
         pass
        
 if __name__=='__main__':
-    url = 'https://baseballsavant.mlb.com/statcast_leaderboard'
-    mm = URLHandler(url = url, year = 2016, abs = 100, player_type = 'pitcher')
-    dd = mm.html_parser('statcast')
+    pass
