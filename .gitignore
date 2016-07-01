@@ -6,3 +6,7 @@ __pycache__
 tensorflow/tensorflow/*
 tensorflow/MNIST_data
 tensorflow/tensorflow
+
+# data
+data/*
+data
