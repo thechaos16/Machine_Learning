@@ -10,3 +10,6 @@ tensorflow/tensorflow
 # data
 data/*
 data
+
+# ipython notebook
+.ipynb_checkpoints/*
