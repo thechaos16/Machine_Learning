@@ -38,13 +38,23 @@ def action_with_memory(func):
 def action_with_memory_and_observation(func):
     env = gym.make('CartPole-v0')
     env.reset()
-    memory = []
-    observation, reward, done, info = None, None, None, None
+    memory = {'observation': [], 'reward': [], 'action': []}
+    observation = None
+    reward = None
+    done = None
+    info = None
     for iteration in range(1000):
         env.render()
         action_for_cur = func(iteration, memory, observation, reward, done, info)
         observation, reward, done, info = env.step(action_for_cur)
-        memory.append(action_for_cur)
+        memory['action'].append(action_for_cur)
+        memory['observation'].append(observation)
+        memory['reward'].append(reward)
+    return memory
+        
+
+def simplest_q_learner(func):
+    pass
 
 
 if __name__ == 'main':
