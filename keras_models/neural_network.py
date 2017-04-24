@@ -25,15 +25,12 @@ class NeuralNetwork:
         self.model.add(Dense(self.output_size, activation='linear'))
         self.model.compile(loss='mse', optimizer=RMSprop())
 
-    def fit(self, input_data, **kwargs):
-        """
-        
-        :param input_data: Dataframe currently, including feature list and output list in beginning
-        :param kwargs: 
-        :return: 
-        """
+    def fit(self, input_matrix, output_matrix=None, **kwargs):
+        if type(input_matrix) == pd.DataFrame and output_matrix is None:
+            output_matrix = input_matrix[self.targets].as_matrix()
+            input_matrix = input_matrix[self.features].as_matrix()
 
-        data_length = len(input_data)
+        data_length = len(output_matrix)
         # initialize parameters
         if "epochs" in kwargs:
             epochs = kwargs["epochs"]
@@ -44,7 +41,7 @@ class NeuralNetwork:
             batch_size = np.min(batch_size, data_length)
         else:
             batch_size = data_length-1
-        self.model.fit(x=input_data[self.features].as_matrix(), y=input_data[self.targets].as_matrix(),
+        self.model.fit(x=input_matrix, y=output_matrix,
                        batch_size=batch_size, epochs=epochs)
 
     def predict(self, test_data):
