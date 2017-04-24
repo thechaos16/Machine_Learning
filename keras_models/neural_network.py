@@ -22,7 +22,7 @@ class NeuralNetwork:
         self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation='sigmoid'))
         for layer_idx in range(self.hidden_layer):
             self.model.add(Dense(self.number_of_nodes, activation='sigmoid', init='uniform'))
-        self.model.add(Dense(self.output_size, activation='softmax'))
+        self.model.add(Dense(self.output_size, activation='linear'))
         self.model.compile(loss='mse', optimizer=RMSprop())
 
     def fit(self, input_data, **kwargs):
@@ -44,13 +44,15 @@ class NeuralNetwork:
             batch_size = np.min(batch_size, data_length)
         else:
             batch_size = data_length-1
-        print(batch_size)
-        print(input_data[self.features])
-        self.model.fit(x=input_data[self.features], y=input_data[self.targets], batch_size=batch_size, epochs=epochs)
+        self.model.fit(x=input_data[self.features].as_matrix(), y=input_data[self.targets].as_matrix(),
+                       batch_size=batch_size, epochs=epochs)
 
     def predict(self, test_data):
-        return self.model.predict(test_data)
+        return self.model.predict(test_data[self.features].as_matrix())
 
 
 if __name__ == "__main__":
-    pass
+    sample_frame =  pd.DataFrame({'aaa':np.random.random(1000), 'bbb':np.random.random(1000)})
+    sample_frame['ccc'] = (sample_frame['aaa'] > 0.5).astype(int)
+    nn_instance = NeuralNetwork(['aaa', 'bbb'], ['ccc'])
+    nn_instance.fit(sample_frame)
