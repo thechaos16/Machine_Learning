@@ -51,7 +51,15 @@ def action_with_memory_and_observation(func):
         memory['observation'].append(observation)
         memory['reward'].append(reward)
     return memory
-        
+
+
+def make_grid(environment, unit_size=10):
+    pass
+
+
+def convert_location_to_grid(location, grid):
+    pass
+
 
 def simplest_q_learner(func):
     pass

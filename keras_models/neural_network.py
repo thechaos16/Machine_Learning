@@ -11,6 +11,17 @@ class NeuralNetwork:
     def __init__(self, feature_list_or_size, output_list_or_size, hidden_layer=3,
                  number_of_nodes=50, loss_function='mse', learning_rate=0.01,
                  optimizer=RMSprop):
+        """
+        Initialize neural network with hyperparameters
+        
+        :param feature_list_or_size: feature size (input dimension of input layer) or name of features if structured
+        :param output_list_or_size: output size (output dimension of last layer) or name of target if structured
+        :param hidden_layer: number of hidden layers (except input and output layer)
+        :param number_of_nodes: number of nodes in each hidden layer
+        :param loss_function: optimizing criteria
+        :param learning_rate: learning rate of model (by epoch)
+        :param optimizer: optimizer in keras
+        """
         if type(feature_list_or_size) is list:
             self.features = feature_list_or_size
             self.feature_size = len(feature_list_or_size)
@@ -28,9 +39,17 @@ class NeuralNetwork:
         self.loss_function = loss_function
         self.learning_rate = learning_rate
         self.optimizer = optimizer
+        # initialize model
         self._initialize_model()
 
     def _initialize_model(self):
+        """
+        Initialize model based on hyperparameters
+        
+        :return: 
+        """
+        # TODO: activation function should be included in hyperparameter
+        # FIXME: currently, all layers shares number of nodes (in future, activation function as well)
         self.model = Sequential()
         self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation='sigmoid'))
         for layer_idx in range(self.hidden_layer):
@@ -39,11 +58,24 @@ class NeuralNetwork:
         self.model.compile(loss=self.loss_function, optimizer=self.optimizer(lr=self.learning_rate))
 
     def fit(self, input_matrix, output_matrix=None, **kwargs):
+        """
+        fit neural network
+        
+        :param input_matrix: numpy matrix or dataframe (if structured)
+        :param output_matrix: numpy matrix
+        :param kwargs: hyperparameters for fitting (number of epochs, batch size)
+        :return: 
+        """
+        # if data is structured
         if type(input_matrix) == pd.DataFrame and output_matrix is None:
             if self.targets is None or self.features is None:
                 raise KeyError("You must set feature and target first!")
             output_matrix = input_matrix[self.targets].as_matrix()
             input_matrix = input_matrix[self.features].as_matrix()
+
+        # check if data size is correct
+        assert self.feature_size == input_matrix.shape[1]
+        assert self.output_size == output_matrix.shape[1]
 
         data_length = len(output_matrix)
         # initialize parameters
