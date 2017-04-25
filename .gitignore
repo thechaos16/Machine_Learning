@@ -13,3 +13,4 @@ data
 
 # ipython notebook
 .ipynb_checkpoints/*
+*.ipynb
