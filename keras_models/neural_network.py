@@ -63,7 +63,7 @@ class NeuralNetwork:
         
         :param input_matrix: numpy matrix or dataframe (if structured)
         :param output_matrix: numpy matrix
-        :param kwargs: hyperparameters for fitting (number of epochs, batch size)
+        :param kwargs: hyperparameters for fitting (number of epochs, batch size, verbose)
         :return: 
         """
         # if data is structured
@@ -88,8 +88,12 @@ class NeuralNetwork:
             batch_size = np.min(batch_size, data_length)
         else:
             batch_size = data_length-1
+        if "verbose" in kwargs:
+            verbose = kwargs["verbose"]
+        else:
+            verbose = False
         self.model.fit(x=input_matrix, y=output_matrix,
-                       batch_size=batch_size, epochs=epochs)
+                       batch_size=batch_size, epochs=epochs, verbose=verbose)
 
     def predict(self, test_data):
         return self.model.predict(test_data[self.features].as_matrix())
