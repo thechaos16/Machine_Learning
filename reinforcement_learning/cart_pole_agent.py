@@ -18,12 +18,13 @@ class CartPoleAgent(NeuralNetwork):
         :param hidden_layers: number of hidden layers 
         :param number_of_nodes: number of nodes for all layer (currently, all layers have same number of nodes)
         """
-        # initialize model
-        super().__init__(4, 2, hidden_layer=hidden_layers, number_of_nodes=number_of_nodes, learning_rate=learning_rate)
-        # initialize parameters
         self.env = env
+        # initialize model
+        super().__init__(4, env.action_space.n,
+                         hidden_layer=hidden_layers, number_of_nodes=number_of_nodes, learning_rate=learning_rate)
+        # initialize parameters
         self.memory = []
-        # hyperparameters
+        # hyperparameter
         self.epsilon = epsilon
         self.discount_rate = discount_rate
 

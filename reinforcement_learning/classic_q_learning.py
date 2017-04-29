@@ -1,19 +1,29 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 18 16:54:29 2016
-
-@author: thech
-"""
 
 import gym
 
 
-def cartpole():
-    env = gym.make('CartPole-v0')
-    env.reset()
-    for _ in range(1000):
-        env.render()
-        env.step(env.action_space.sample())
+class CartPoleQLearning:
+    def __init__(self, env, learning_rate=0.1, discount_rate=0.9, epsilon=0.1):
+        self.env = env
+        self.action_space = self.env.action_space.n
+        self.learning_rate = learning_rate
+        self.discount_rate = discount_rate
+        self.epsilon = epsilon
+        self.q_table = []
+
+    def add_memory(self, **kwargs):
+        # check if state-action set is already trained
+        if True:
+            pass
+        else:
+            self.q_table.append(kwargs)
+
+    def train(self, state, action, reward, next_state):
+        pass
+
+    def action(self, state):
+        pass
 
 
 def action_strategy(func):
@@ -51,18 +61,6 @@ def action_with_memory_and_observation(func):
         memory['observation'].append(observation)
         memory['reward'].append(reward)
     return memory
-
-
-def make_grid(environment, unit_size=10):
-    pass
-
-
-def convert_location_to_grid(location, grid):
-    pass
-
-
-def simplest_q_learner(func):
-    pass
 
 
 if __name__ == 'main':
