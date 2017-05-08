@@ -41,8 +41,16 @@ class QLearner:
     def action(self, state):
         # epsilon-greedy
         if np.random.random() <= self.epsilon:
-            return self.env.action_space.sample()
-
+            return self.env.action_space.sample()  # FIXME: this format only works with openAI gym
+        q_table_for_state = self.q_table[state]
+        # check rewards
+        max_val = -np.inf
+        max_key = None
+        for key in q_table_for_state:
+            if q_table_for_state[key] > max_val:
+                max_key = key
+                max_val = q_table_for_state[key]
+        return max_key
 
 if __name__ == 'main':
     pass
