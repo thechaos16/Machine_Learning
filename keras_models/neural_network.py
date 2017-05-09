@@ -10,7 +10,7 @@ from keras.optimizers import RMSprop
 class NeuralNetwork:
     def __init__(self, feature_list_or_size, output_list_or_size, hidden_layer=3,
                  number_of_nodes=50, loss_function='mse', learning_rate=0.01,
-                 optimizer=RMSprop):
+                 optimizer=RMSprop, activation='relu'):
         """
         Initialize neural network with hyperparameters
         
@@ -21,6 +21,7 @@ class NeuralNetwork:
         :param loss_function: optimizing criteria
         :param learning_rate: learning rate of model (by epoch)
         :param optimizer: optimizer in keras
+        :param activation: activation function (e.g. relu, softmax, sigmoid)
         """
         if type(feature_list_or_size) is list:
             self.features = feature_list_or_size
@@ -39,6 +40,7 @@ class NeuralNetwork:
         self.loss_function = loss_function
         self.learning_rate = learning_rate
         self.optimizer = optimizer
+        self.activation = activation
         # initialize model
         self._initialize_model()
 
@@ -48,20 +50,19 @@ class NeuralNetwork:
         
         :return: 
         """
-        # TODO: activation function should be included in hyperparameter
-        # FIXME: currently, all layers shares number of nodes (in future, activation function as well)
+        # FIXME: more detailed interface is required in future
         self.model = Sequential()
-        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation='sigmoid'))
+        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
         for layer_idx in range(self.hidden_layer):
-            self.model.add(Dense(self.number_of_nodes, activation='sigmoid', init='uniform'))
-        self.model.add(Dense(self.output_size, activation='linear'))
+            self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform'))
+        self.model.add(Dense(self.output_size, activation=self.activation))
         self.model.compile(loss=self.loss_function, optimizer=self.optimizer(lr=self.learning_rate))
 
     def fit(self, input_matrix, output_matrix=None, **kwargs):
         """
         fit neural network
         
-        :param input_matrix: numpy matrix or dataframe (if structured)
+        :param input_matrix: numpy matrix or data frame (if structured)
         :param output_matrix: numpy matrix
         :param kwargs: hyperparameters for fitting (number of epochs, batch size, verbose)
         :return: 
@@ -100,7 +101,11 @@ class NeuralNetwork:
 
 
 if __name__ == "__main__":
-    sample_frame =  pd.DataFrame({'aaa':np.random.random(1000), 'bbb':np.random.random(1000)})
+    data_size = 100
+    sample_frame = pd.DataFrame({'aaa': np.random.random(data_size), 'bbb': np.random.random(data_size)})
     sample_frame['ccc'] = (sample_frame['aaa'] > 0.5).astype(int)
     nn_instance = NeuralNetwork(['aaa', 'bbb'], ['ccc'])
     nn_instance.fit(sample_frame)
+    predicted = nn_instance.predict(sample_frame)
+    from evaluation.error_based import mse, mae
+    print(mse(predicted.ravel(), np.array(sample_frame['ccc'])))
