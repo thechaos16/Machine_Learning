@@ -5,12 +5,13 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import RMSprop
+from keras.constraints import non_neg
 
 
 class NeuralNetwork:
     def __init__(self, feature_list_or_size, output_list_or_size, hidden_layer=3,
                  number_of_nodes=50, loss_function='mse', learning_rate=0.01,
-                 optimizer=RMSprop, activation='relu'):
+                 optimizer=RMSprop, activation='relu', bias_term=non_neg):
         """
         Initialize neural network with hyperparameters
         
@@ -22,6 +23,7 @@ class NeuralNetwork:
         :param learning_rate: learning rate of model (by epoch)
         :param optimizer: optimizer in keras
         :param activation: activation function (e.g. relu, softmax, sigmoid)
+        :param bias_term: bias term 
         """
         if type(feature_list_or_size) is list:
             self.features = feature_list_or_size
@@ -41,6 +43,7 @@ class NeuralNetwork:
         self.learning_rate = learning_rate
         self.optimizer = optimizer
         self.activation = activation
+        self.bias_constraint = bias_term
         # initialize model
         self._initialize_model()
 
@@ -52,9 +55,11 @@ class NeuralNetwork:
         """
         # FIXME: more detailed interface is required in future
         self.model = Sequential()
-        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
+        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation,
+                             bias_constraint=self.bias_constraint))
         for layer_idx in range(self.hidden_layer):
-            self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform'))
+            self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform',
+                                 bias_constraint=self.bias_constraint))
         self.model.add(Dense(self.output_size, activation=self.activation))
         self.model.compile(loss=self.loss_function, optimizer=self.optimizer(lr=self.learning_rate))
 

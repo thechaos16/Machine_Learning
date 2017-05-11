@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf
+from tensorflow.python.training.adam import AdamOptimizer
 
 
 class NeuralNetworkTensorFlow:
     def __init__(self, feature_list_or_size, output_list_or_size, hidden_layer=3,
-                 number_of_nodes=50, loss_function='mse', learning_rate=0.01, optimizer=None,
+                 number_of_nodes=50, loss_function='mse', learning_rate=0.01, optimizer=AdamOptimizer,
                  activation=tf.nn.relu, patch_size=5):
         if type(feature_list_or_size) is list:
             self.features = feature_list_or_size
@@ -26,7 +27,7 @@ class NeuralNetworkTensorFlow:
         self.activation = activation
         self.optimizer = optimizer
         self.patch_size = patch_size  # Note: why patch size is needed?
-        self._initialize_model()
+        self.model = self._initialize_model()
 
     def _initialize_model(self):
         all_layers = []
@@ -56,10 +57,22 @@ class NeuralNetworkTensorFlow:
         weight = tf.Variable(tf.truncated_normal(shape, stddev=0.1))
         bias = tf.Variable(tf.constant(bias_val, shape=[self.output_size]))
         output_layer = self.activation(tf.matmul(all_layers[-1] * weight) + bias)
+        all_layers.append(output_layer)
+        return all_layers
 
     def train(self, input_data, **kwargs):
-        # optimizer parser
-        pass
+        # output placeholder
+        y_out = tf.placeholder(float, [None, self.output_size])
+        # loss function
+        if self.loss_function == 'mse':
+            loss = tf.sqrt(tf.reduce_mean(tf.square(tf.sub(y_out, self.model[-1]))))
+        else:
+            raise NotImplementedError()
+        # optimizer
+        train_opt = self.optimizer().minimize(loss)
+        sess = tf.InteractiveSession()
+        sess.run(tf.initialize_all_variables())
+        # run train
 
     def predict(self, input_data):
         pass
