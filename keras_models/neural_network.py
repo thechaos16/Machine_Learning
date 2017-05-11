@@ -13,7 +13,7 @@ class NeuralNetwork:
                  number_of_nodes=50, loss_function='mse', learning_rate=0.01,
                  optimizer=RMSprop, activation='relu', bias_term=non_neg):
         """
-        Initialize neural network with hyperparameters
+        Initialize neural network with structure-related variables
         
         :param feature_list_or_size: feature size (input dimension of input layer) or name of features if structured
         :param output_list_or_size: output size (output dimension of last layer) or name of target if structured
@@ -23,7 +23,7 @@ class NeuralNetwork:
         :param learning_rate: learning rate of model (by epoch)
         :param optimizer: optimizer in keras
         :param activation: activation function (e.g. relu, softmax, sigmoid)
-        :param bias_term: bias term 
+        :param bias_term: bias constraint 
         """
         if type(feature_list_or_size) is list:
             self.features = feature_list_or_size
@@ -49,7 +49,7 @@ class NeuralNetwork:
 
     def _initialize_model(self):
         """
-        Initialize model based on hyperparameters
+        Initialize model based on user input
         
         :return: 
         """

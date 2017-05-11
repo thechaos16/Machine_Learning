@@ -11,6 +11,7 @@ from scipy.stats import distributions
 from collections import namedtuple
 from scipy import signal
 
+
 def manwhitney_test(bins1, counts1, bins2, counts2):
     if len(bins1) == 1 and len(bins2) == 1:
         return bins1[0] != bins2[0]
@@ -18,7 +19,7 @@ def manwhitney_test(bins1, counts1, bins2, counts2):
     # get sorting indices from pooled keys 1 and 2.
     idx = np.argsort(bins1+bins2)
     # compute ranks from a pool using midrank for the repeating values.
-    tie_corrleation = 0
+    tie_correlation = 0
     cur_start_rank = 1
     sum_1 = 0
     sum_2 = 0
@@ -45,22 +46,23 @@ def manwhitney_test(bins1, counts1, bins2, counts2):
             sum_2 += cur_rank * current_count
 
         if current_count > 1:
-            tie_corrleation += current_count * current_count * current_count - current_count
+            tie_correlation += current_count * current_count * current_count - current_count
             
     size1 = np.sum(counts1)
     size2 = np.sum(counts2)
     size_total = (size1 + size2)
-    tie_corrleation /= size_total * (size_total - 1)
+    tie_correlation /= size_total * (size_total - 1)
     u_1 = sum_1 - size1 * (size1 + 1) / 2
     u_2 = sum_2 - size2 * (size2 + 1) / 2
     
     # compute p-value for the two-sided test
-    sd = np.sqrt(size1 * size2 * (size_total + 1 - tie_corrleation) / 12.0)
+    sd = np.sqrt(size1 * size2 * (size_total + 1 - tie_correlation) / 12.0)
     mean = (u_1 + u_2) / 2
     z = np.abs(u_1 - mean) / sd
     p_value = (distributions.norm.sf(z) * 2)
     result = namedtuple('stat_result', ['p_val', 'score'])
     return result(p_value, z)
+
 
 def compare_continuous_distribution(data1, data2):
     normal1 = normality_checker(data1)
@@ -73,13 +75,15 @@ def compare_continuous_distribution(data1, data2):
     else:
         result = stats.ks_2samp(data1, data2)
     return result.pvalue
-    
+
+
 def normality_checker(data):
     result = stats.kstest(data, 'norm')
     return result.pvalue
-    
+
+
 def difference_by_gradient(data, opt={}):
-    ## parameter initialziation
+    # parameter initialization
     if 'window' in opt:
         filter_window_size = opt['window']
         if filter_window_size%2==0:
@@ -97,32 +101,28 @@ def difference_by_gradient(data, opt={}):
     else:
         thr= np.std(data)*kernel_size/2
 
-    ## smoothing by convolution
+    # smoothing by convolution
     half_width = (filter_window_size+1)/2
     gaussian_filter = np.exp(-0.5*np.power([elm-(filter_window_size-1)/2 for elm in range(filter_window_size)],2))
     smooth_signal = np.convolve(data, gaussian_filter)
-    ## crop smooth_signal
+    # crop smooth_signal
     smooth_signal = smooth_signal[half_width:-half_width]
-    ## kernel with difference signal
+    # kernel with difference signal
     list1 = np.linspace(-1,-(kernel_size-1)/2,(kernel_size-1)/2)
     list2 = np.linspace((kernel_size-1)/2,1,(kernel_size-1)/2)
     kernel = np.concatenate([list1,[0],list2])
     gradient_signal = np.convolve(smooth_signal,kernel)
-    ## crop gradient_signal
+    # crop gradient_signal
     gradient_signal = abs(gradient_signal[half_width:-half_width])
  
-    ## find local maxima and minima
+    # find local maximum and minimum
     peak_index = signal.find_peaks_cwt(gradient_signal,np.arange(1,10))
-    ## remove both side peaks
+    # remove both side peaks
     peak_index = [x for x in peak_index if x>half_width and x<=len(data)-half_width]
     
-    ## result Index
+    # result Index
     result_idx = []
     for i in peak_index:
         if gradient_signal[i]>=thr:
             result_idx.append(i)
     return result_idx   
-
-
-def outlier_detection_in_time_series(data):
-    pass

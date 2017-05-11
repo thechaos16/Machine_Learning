@@ -48,7 +48,6 @@ class CartPoleAgent(NeuralNetwork):
             # train after one episode
             self.train()
 
-    # use experience replay
     def train(self, batch_size=500):
         """
         Train model using experience replay (same as classical q-learning)
