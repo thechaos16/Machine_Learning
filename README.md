@@ -2,4 +2,4 @@
 Tutorials for machine learning
 
 #### This is for playground related to machine learning
-#### All programs would be in tensorflow
+#### Tensorflow and basic python (and theano) will be used
