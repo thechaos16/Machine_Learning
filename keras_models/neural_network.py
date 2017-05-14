@@ -55,11 +55,9 @@ class NeuralNetwork:
         """
         # FIXME: more detailed interface is required in future
         self.model = Sequential()
-        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation,
-                             bias_constraint=self.bias_constraint))
+        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
         for layer_idx in range(self.hidden_layer):
-            self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform',
-                                 bias_constraint=self.bias_constraint))
+            self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform'))
         self.model.add(Dense(self.output_size, activation=self.activation))
         self.model.compile(loss=self.loss_function, optimizer=self.optimizer(lr=self.learning_rate))
 
