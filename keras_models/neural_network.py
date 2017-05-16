@@ -6,12 +6,14 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import RMSprop
 from keras.constraints import non_neg
+from keras.layers.advanced_activations import PReLU
+from keras.layers.normalization import BatchNormalization
 
 
 class NeuralNetwork:
     def __init__(self, feature_list_or_size, output_list_or_size, hidden_layer=3,
                  number_of_nodes=50, loss_function='mse', learning_rate=0.01,
-                 optimizer=RMSprop, activation='relu', bias_term=non_neg):
+                 optimizer=RMSprop, activation='relu', bias_term=non_neg, batch_normalization=False):
         """
         Initialize neural network with structure-related variables
         
@@ -24,6 +26,7 @@ class NeuralNetwork:
         :param optimizer: optimizer in keras
         :param activation: activation function (e.g. relu, softmax, sigmoid)
         :param bias_term: bias constraint 
+        :param batch_normalization: If true, run batch normalization
         """
         if type(feature_list_or_size) is list:
             self.features = feature_list_or_size
@@ -44,6 +47,7 @@ class NeuralNetwork:
         self.optimizer = optimizer
         self.activation = activation
         self.bias_constraint = bias_term
+        self.batch_normalization = batch_normalization
         # initialize model
         self._initialize_model()
 
@@ -57,8 +61,13 @@ class NeuralNetwork:
         self.model = Sequential()
         self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
         for layer_idx in range(self.hidden_layer):
-            self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform'))
-        self.model.add(Dense(self.output_size, activation=self.activation))
+            if self.batch_normalization:
+                self.model.add(Dense(self.number_of_nodes, activation='linear', init='uniform'))
+                self.model.add(BatchNormalization())
+                self.model.add(PReLU())  # for now, after batch normalization, always use prelu
+            else:
+                self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform'))
+        self.model.add(Dense(self.output_size, activation='linear'))  # force to linear for output layer (or softmax?)
         self.model.compile(loss=self.loss_function, optimizer=self.optimizer(lr=self.learning_rate))
 
     def fit(self, input_matrix, output_matrix=None, **kwargs):
@@ -107,7 +116,7 @@ if __name__ == "__main__":
     data_size = 100
     sample_frame = pd.DataFrame({'aaa': np.random.random(data_size), 'bbb': np.random.random(data_size)})
     sample_frame['ccc'] = (sample_frame['aaa'] > 0.5).astype(int)
-    nn_instance = NeuralNetwork(['aaa', 'bbb'], ['ccc'])
+    nn_instance = NeuralNetwork(['aaa', 'bbb'], ['ccc'], batch_normalization=True)
     nn_instance.fit(sample_frame)
     predicted = nn_instance.predict(sample_frame)
     from evaluation.error_based import mse, mae
