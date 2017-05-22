@@ -49,6 +49,7 @@ class NeuralNetwork:
         self.bias_constraint = bias_term
         self.batch_normalization = batch_normalization
         # initialize model
+        self.model = Sequential()
         self._initialize_model()
 
     def _initialize_model(self):
@@ -58,7 +59,6 @@ class NeuralNetwork:
         :return: 
         """
         # FIXME: more detailed interface is required in future
-        self.model = Sequential()
         self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
         for layer_idx in range(self.hidden_layer):
             if self.batch_normalization:
