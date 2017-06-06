@@ -1,5 +1,4 @@
 """Functions for downloading and reading MNIST data."""
-from __future__ import print_function
 import gzip
 import os
 import urllib
@@ -13,7 +12,7 @@ def maybe_download(filename, work_directory):
         os.mkdir(work_directory)
     filepath = os.path.join(work_directory, filename)
     if not os.path.exists(filepath):
-        filepath, _ = urllib.urlretrieve(SOURCE_URL + filename, filepath)
+        filepath, _ = urllib.request.urlretrieve(SOURCE_URL + filename, filepath)
         statinfo = os.stat(filepath)
         print('Succesfully downloaded', filename, statinfo.st_size, 'bytes.')
     return filepath
@@ -161,3 +160,7 @@ def read_data_sets(train_dir, fake_data=False, one_hot=False):
     data_sets.validation = DataSet(validation_images, validation_labels)
     data_sets.test = DataSet(test_images, test_labels)
     return data_sets
+
+
+if __name__ == "__main__":
+    mnist = read_data_sets('./MNIST_data', one_hot=True)
