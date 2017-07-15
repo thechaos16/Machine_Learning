@@ -7,9 +7,12 @@ from models.keras_models.neural_network import NeuralNetwork
 
 class DeepQNetwork(NeuralNetwork):
     """
-    It is general version of deep q network which can be adapted any environment
+    General version of deep q network which can be adapted any environment
     """
     def __init__(self):
+        pass
+
+    def _environment_handler(self):
         pass
 
     def experience_replay(self):
@@ -19,6 +22,9 @@ class DeepQNetwork(NeuralNetwork):
         pass
 
     def predict(self):
+        pass
+
+    def experiment(self):
         pass
 
 

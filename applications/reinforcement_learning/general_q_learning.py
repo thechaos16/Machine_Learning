@@ -70,4 +70,10 @@ class QLearner:
 
 
 if __name__ == 'main':
-    pass
+    # sample game
+    from applications.reinforcement_learning.simple_game import SimpleGame
+    grid_size = 5
+    # q learner
+    q_leaner = QLearner(initial_state=None, action_space=4, learning_rate=1.0)
+    # game iteration
+    game_set = SimpleGame(5)

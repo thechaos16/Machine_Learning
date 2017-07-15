@@ -6,8 +6,8 @@ from models.keras_models.neural_network import NeuralNetwork
 
 
 class CartPoleAgent(NeuralNetwork):
-    def __init__(self, env, discount_rate=0.9, epsilon=1.0,
-                 learning_rate=0.01, hidden_layers=3, number_of_nodes=128):
+    def __init__(self, env, discount_rate=0.7, epsilon=0.1,
+                 learning_rate=0.1, hidden_layers=3, number_of_nodes=128, batch_normalization=True):
         """
         This specific agent uses neural network by using keras. It uses deep q-learning from deepmind
         
@@ -17,11 +17,13 @@ class CartPoleAgent(NeuralNetwork):
         :param learning_rate: learning rate of neural network
         :param hidden_layers: number of hidden layers 
         :param number_of_nodes: number of nodes for all layer (currently, all layers have same number of nodes)
+        :param batch_normalization: boolean
         """
         self.env = env
         # initialize model
-        super().__init__(4, env.action_space.n,
-                         hidden_layer=hidden_layers, number_of_nodes=number_of_nodes, learning_rate=learning_rate)
+        super().__init__(env.observation_space.shape[0], env.action_space.n,
+                         hidden_layer=hidden_layers, number_of_nodes=number_of_nodes, learning_rate=learning_rate,
+                         batch_normalization=batch_normalization)
         # initialize parameters
         self.memory = []
         # hyperparameter
@@ -35,7 +37,6 @@ class CartPoleAgent(NeuralNetwork):
             for time in range(max_time):
                 # model evaluation by time it stays alive relative to max_time
                 cur_act = self.action(state)
-
                 next_state, reward, done, _ = self.env.step(cur_act)
                 next_state = np.reshape(state, [1, 4])
 

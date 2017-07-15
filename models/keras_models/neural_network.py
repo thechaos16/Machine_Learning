@@ -59,7 +59,12 @@ class NeuralNetwork:
         :return: 
         """
         # FIXME: more detailed interface is required in future
-        self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
+        if self.batch_normalization:
+            self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation="linear"))
+            self.model.add(BatchNormalization())
+            self.model.add(PReLU())
+        else:
+            self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
         for layer_idx in range(self.hidden_layer):
             if self.batch_normalization:
                 self.model.add(Dense(self.number_of_nodes, activation='linear', kernel_initializer='uniform'))
