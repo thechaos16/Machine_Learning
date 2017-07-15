@@ -62,11 +62,11 @@ class NeuralNetwork:
         self.model.add(Dense(self.number_of_nodes, input_dim=self.feature_size, activation=self.activation))
         for layer_idx in range(self.hidden_layer):
             if self.batch_normalization:
-                self.model.add(Dense(self.number_of_nodes, activation='linear', init='uniform'))
+                self.model.add(Dense(self.number_of_nodes, activation='linear', kernel_initializer='uniform'))
                 self.model.add(BatchNormalization())
                 self.model.add(PReLU())  # for now, after batch normalization, always use prelu
             else:
-                self.model.add(Dense(self.number_of_nodes, activation=self.activation, init='uniform'))
+                self.model.add(Dense(self.number_of_nodes, activation=self.activation, kernel_initializer='uniform'))
         self.model.add(Dense(self.output_size, activation='linear'))  # force to linear for output layer (or softmax?)
         self.model.compile(loss=self.loss_function, optimizer=self.optimizer(lr=self.learning_rate))
 

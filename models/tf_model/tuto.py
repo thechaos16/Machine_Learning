@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import tensorflow.python.platform
 import tensorflow as tf
-import input_data as ind
+from tf_model import input_data as ind
 import numpy as np
 import os
 
@@ -40,9 +40,9 @@ class TensorflowExample:
         ## train
         number_of_try = 1000
         for i in range(number_of_try):
-        	batch_xs, batch_ys = self.data.train.next_batch(100)
-        	# train_step.run({x:batch_xs,y_:batch_ys})
-        	sess.run(train_step,feed_dict={x:batch_xs,y_:batch_ys})
+            batch_xs, batch_ys = self.data.train.next_batch(100)
+            # train_step.run({x:batch_xs,y_:batch_ys})
+            sess.run(train_step,feed_dict={x:batch_xs,y_:batch_ys})
         
         # Test trained model
         correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))

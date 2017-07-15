@@ -2,7 +2,7 @@
 
 import numpy as np
 import copy
-from keras_models.neural_network import NeuralNetwork
+from models.keras_models.neural_network import NeuralNetwork
 
 
 class CartPoleAgent(NeuralNetwork):
