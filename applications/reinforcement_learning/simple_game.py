@@ -19,8 +19,9 @@ class SimpleGame:
             self.doom_loc = [np.random.randint(0, self.grid), np.random.randint(0, self.grid)]
         self.agent_point = None
         self.game_status = 0  # NOTE: 1 for win, -1 for lose, 0 for still playing
+        self.action_space = ["up", "down", "left", "right"]
 
-    def _display_board(self, agent_loc):
+    def display_board(self, agent_loc):
         for row_idx in range(self.grid):
             row_printer = []
             for col_idx in range(self.grid):
@@ -44,7 +45,7 @@ class SimpleGame:
         else:
             return 0
 
-    def _game_initialization(self, start_point=None):
+    def game_initialization(self, start_point=None):
         if start_point is None:
             self.agent_point = [0, 0]
         else:
@@ -71,12 +72,22 @@ class SimpleGame:
         else:
             raise NotImplementedError()
 
-    def game_player(self, move):
+    def get_possible_actions(self, agent_loc):
+        possible_actions = []
+        for action in self.action_space:
+            try:
+                _ = self._move(action, agent_loc)
+                possible_actions.append(action)
+            except NotImplementedError:
+                pass
+        return possible_actions
+
+    def game_player(self, move, verbose=False):
         if self.game_status != 0:  # If game is done, block playing
             print("You {result} game".format(result="win" if self.game_status == 1 else "lose"))
             return
         if self.agent_point is None:
-            self._game_initialization()
+            self.game_initialization()
         try:
             new_loc = self._move(move, self.agent_point)
         except NotImplementedError as e:
@@ -84,13 +95,15 @@ class SimpleGame:
         self.agent_point = new_loc
         result = self._result_checker(self.agent_point)
         if result == 1:
-            print("Win!")
+            if verbose:
+                print("Win!")
             self.game_status = 1
         elif result == -1:
-            print("Lose!")
+            if verbose:
+                print("Lose!")
             self.game_status = -1
         else:
-            self._display_board(self.agent_point)
+            self.display_board(self.agent_point)
 
 
 if __name__ == "__main__":
