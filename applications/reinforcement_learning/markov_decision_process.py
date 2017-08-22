@@ -7,6 +7,8 @@ class MarkovDecisionProcess:
     def __init__(self, env=None, number_of_grid=3, action=4, discount_rate=0.1, max_iter=10, strategy="value"):
         if env is None:
             self.env = SimpleGame(number_of_grid, [2, 2], [0, 2])  # FIXME: firstly, train on fixed game
+        else:
+            self.env = env
         self.goal_loc = self.env.goal_loc
         self.doom_loc = self.env.doom_loc
         self.grid_size = number_of_grid
@@ -38,10 +40,12 @@ class MarkovDecisionProcess:
             self.value[idx_str] = 0.0
 
     def bellman(self):
+        sum_diff = 0.0
         for state in self.value.keys():
             agent_loc = [int(state[0]), int(state[1])]
             actions = self.env.get_possible_actions(agent_loc)
-            bellman_init = 0.0
+            bellman_init = self.value[state]
+            origin_value = self.value[state]
             for action in actions:
                 if action == "up":
                     next_state = [agent_loc[0]-1, agent_loc[1]]
@@ -58,12 +62,16 @@ class MarkovDecisionProcess:
                     bellman_init = new_bellman
                     self.value[state] = new_bellman
                     self.policy[state] = list((np.array(self.action_idx) == action).astype(int))
+            sum_diff += np.abs(self.value[state] - origin_value)
+        return sum_diff / self.state_space_size
 
-    def train(self):
+    def train(self, thr=0.01):
         for iteration in range(self.max_iter):
             if self.strategy == "value":
                 # converges
-                self.bellman()
+                bellman_diff = self.bellman()
+                if bellman_diff < thr:  # converge
+                    break
             elif self.strategy == "policy":
                 pass
             else:
